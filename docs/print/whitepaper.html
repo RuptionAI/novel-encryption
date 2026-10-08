@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Novel Encryption: Turning Books into Keys — White Paper</title>
+<meta name="author" content="Jeff Pittman; Ruption AI">
+<meta name="description" content="Novel Encryption white paper: narrative and letter-chain keys drawn from books, lost-chapter encoding, Argon2id and XChaCha20-Poly1305.">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  /* Print edition of docs/WHITEPAPER.md (scripts/build_pdf.sh). US Letter. */
+  :root { --ink: #1f1810; --ink-2: #5b4b3c; --accent: #8a2b22; --gold: #a8782a; --rule: #cdbb98; --tint: #f7f1e4; }
+  @page {
+    size: letter;
+    margin: 0.95in 1in 0.9in 1in;
+    @top-left { content: "Novel Encryption"; font: italic 9pt "EB Garamond", serif; color: #5b4b3c; }
+    @top-right { content: "White Paper · Version 1.0 · October 2026"; font: 9pt "EB Garamond", serif; color: #5b4b3c; }
+    @bottom-center { content: counter(page) " of " counter(pages); font: 9pt "EB Garamond", serif; color: #5b4b3c; }
+  }
+  @page :first { @top-left { content: none; } @top-right { content: none; } @bottom-center { content: none; } }
+  html { font-family: "EB Garamond", Georgia, serif; font-size: 11.2pt; color: var(--ink); }
+  body { margin: 0; line-height: 1.42; font-variant-numeric: oldstyle-nums proportional-nums; }
+  p, li { text-align: justify; hyphens: auto; orphans: 3; widows: 3; }
+  a { color: var(--accent); text-decoration: none; }
+  strong { font-weight: 600; }
+  code { font-family: "Courier Prime", monospace; font-size: 0.86em; }
+
+  /* Cover */
+  .cover { height: 8.9in; display: flex; flex-direction: column; break-after: page; position: relative; }
+  .cover .kind { font: 700 10pt "Courier Prime", monospace; letter-spacing: 0.18em; color: var(--accent); margin-top: 1.1in; }
+  .cover .rule { border: 0; border-top: 2pt solid var(--accent); width: 1.4in; margin: 14pt 0 22pt; }
+  .cover h1 { font-size: 46pt; line-height: 1; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  .cover h3 { font-size: 19pt; font-weight: 400; font-style: italic; color: var(--ink-2); margin: 12pt 0 40pt; }
+  .cover p { text-align: left; hyphens: manual; font-size: 12pt; line-height: 1.6; margin: 0 0 4pt; }
+  .cover p strong { font-size: 14pt; }
+  .cover .foot { margin-top: auto; border-top: 0.75pt solid var(--rule); padding-top: 10pt; font-size: 9.5pt; color: var(--ink-2); display: flex; justify-content: space-between; }
+  .cover .stamp { position: absolute; right: 0; top: 0.9in; transform: rotate(7deg); border: 2pt solid var(--accent); color: var(--accent);
+                  font: 700 10pt "Courier Prime", monospace; letter-spacing: 0.1em; padding: 4pt 9pt; opacity: 0.85; }
+
+  /* Abstract and contents */
+  .front { break-after: page; }
+  .front .toc { break-before: page; }
+  .front h2 { font-size: 15pt; font-weight: 600; margin: 0 0 8pt; letter-spacing: 0.02em; }
+  .front .abstract { margin-bottom: 26pt; }
+  .front .abstract p { font-size: 10.6pt; }
+  .toc ol { list-style: none; padding: 0; margin: 0; columns: 1; }
+  .toc li { display: flex; align-items: baseline; text-align: left; margin: 0; line-height: 1.32; }
+  .toc li a { color: var(--ink); }
+  .toc li::after { content: ""; flex: 1; order: 1; border-bottom: 0.6pt dotted var(--rule); margin: 0 5pt; transform: translateY(-3pt); }
+  .toc .toc-page { order: 2; font-variant-numeric: lining-nums tabular-nums; }
+  .toc .toc-2 { font-weight: 600; margin-top: 4pt; }
+  .toc .toc-3 { padding-left: 16pt; font-size: 10.2pt; }
+
+  /* Body */
+  h2 { font-size: 15pt; font-weight: 600; margin: 22pt 0 6pt; break-after: avoid; border-bottom: 0.75pt solid var(--rule); padding-bottom: 3pt; }
+  h3 { font-size: 12pt; font-weight: 600; font-style: italic; margin: 14pt 0 4pt; break-after: avoid; }
+  p { margin: 0 0 7pt; }
+  ul, ol { margin: 0 0 8pt; padding-left: 18pt; }
+  li { margin-bottom: 3pt; }
+  blockquote { margin: 8pt 0 10pt; padding: 7pt 12pt; border-left: 2.5pt solid var(--gold); background: var(--tint); font-style: italic; break-inside: avoid; }
+  blockquote p { text-align: left; margin: 0 0 4pt; }
+  pre { font-family: "Courier Prime", monospace; font-size: 8.6pt; line-height: 1.35; background: var(--tint); border: 0.6pt solid var(--rule);
+        padding: 7pt 9pt; white-space: pre-wrap; break-inside: avoid; margin: 6pt 0 10pt; }
+  pre code { font-size: inherit; }
+  .table-scroll { margin: 8pt 0 12pt; }
+  tr { break-inside: avoid; }
+  thead { display: table-header-group; }
+  table { border-collapse: collapse; width: 100%; font-size: 9pt; line-height: 1.3; font-variant-numeric: lining-nums tabular-nums; }
+  th { text-align: left; font-weight: 600; border-bottom: 1pt solid var(--ink); padding: 3pt 5pt; }
+  td { border-bottom: 0.5pt solid var(--rule); padding: 2.5pt 5pt; vertical-align: top; }
+  .align-right { text-align: right; } .align-center { text-align: center; } .align-left { text-align: left; }
+  hr { border: 0; border-top: 0.75pt solid var(--rule); margin: 16pt 0; }
+  #references + ol li, #references ~ ol li { font-size: 9.6pt; text-align: left; }
+</style>
+</head>
+<body>
+  <section class="cover">
+    <div class="kind">WHITE PAPER</div>
+    <div class="stamp">CHECKED OUT</div>
+    <hr class="rule">
+    <!-- COVER -->
+    <div class="foot"><span>© 2026 Jeff Pittman and Ruption AI · CC BY 4.0</span><span>novelencryption.com</span></div>
+  </section>
+  <section class="front">
+    <div class="abstract"><!-- ABSTRACT --></div>
+    <nav class="toc"><h2>Contents</h2><ol>
+<!-- TOC --></ol></nav>
+  </section>
+  <main><!-- BODY --></main>
+</body>
+</html>

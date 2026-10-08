@@ -3,6 +3,7 @@
 ### Turning books into keys, and messages into lost chapters
 
 **Jeff Pittman** and **Ruption AI**
+
 Version 1.0 (draft) · October 2026 · [novelencryption.com](https://novelencryption.com) · [github.com/RuptionAI/novel-encryption](https://github.com/RuptionAI/novel-encryption)
 
 ---
@@ -19,7 +20,7 @@ book. Every three words in a row appear together somewhere in the novel:
 > evidently an infantry officer who said he hoped to find out everything very thoroughly
 > and accurately as every German has to.
 >
-> *(An example 135-bit key from* War and Peace*. Never use a key that has been published.)*
+> *(An example 135-bit key from War and Peace. Never use a key that has been published.)*
 
 To unlock the data, the person supplies the same novel and the same key. The encrypted
 message itself can be written as a **lost chapter**: a new passage in the book's voice
@@ -284,9 +285,13 @@ users to invent them.
 ### 5.6 Sealing data
 
 ```
-password    = "NovelEncryption/v1/key\n" ‖ fingerprint(book) ‖ key words joined by spaces
-key ‖ nonce = Argon2id(password, random 16-byte salt, 64 MiB, 3 passes, 1 lane) → 32 + 24 bytes
-message     = format byte ‖ salt ‖ XChaCha20-Poly1305(key, nonce, flags ‖ payload, AD = format byte ‖ salt)
+password    = "NovelEncryption/v1/key\n" ‖ fingerprint(book)
+              ‖ key words joined by spaces
+key ‖ nonce = Argon2id(password, random 16-byte salt,
+                       64 MiB, 3 passes, 1 lane) → 32 + 24 bytes
+message     = format byte ‖ salt
+              ‖ XChaCha20-Poly1305(key, nonce, flags ‖ payload,
+                                   AD = format byte ‖ salt)
 ```
 
 The design aims for the smallest message that gives up no security:
@@ -336,8 +341,7 @@ strange new chapter of *Moby-Dick*. Capitals, punctuation, line breaks and the h
 are ignored when decoding, so a chapter survives being pasted through email or chat.
 
 **Novel armor**, the compact alternative, writes each byte as one of the book's 256 most
-frequent words, grouped into sentences: In novel armor, each byte becomes
-one of the book's 256 most frequent words, grouped into sentences:
+frequent words, grouped into sentences:
 
 > Whales thou queequeg last and and the the and the his the. The the and between into
 > other. New round pequod called oil though. Over seems end stood because high arm

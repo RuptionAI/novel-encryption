@@ -64,7 +64,7 @@ works, including your own.
 | `catalog/` | public-domain texts, sources and fingerprints |
 | `infra/aws/` | hosting on AWS: S3 + CloudFront + Route 53 (`./deploy.sh`) |
 | `docs/SPEC.md` | byte-exact specification |
-| `docs/WHITEPAPER.md` | design, measurements and security analysis |
+| `docs/WHITEPAPER.md` | design, measurements and security analysis ([PDF](docs/novel-encryption-whitepaper.pdf); rebuild with `scripts/build_pdf.sh`) |
 | `vectors/v1.json` | conformance vectors for other-language ports |
 
 ```sh

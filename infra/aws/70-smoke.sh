@@ -19,6 +19,8 @@ check /pkg/novel_encryption_wasm_bg.wasm application/wasm
 check /novels/catalog.json application/json
 check /novels/king-james-bible.txt text/plain
 check /fonts/fonts.css text/css
+check /og.png image/png
+check /novel-encryption-whitepaper.pdf application/pdf
 h=$(curl -sSI "$base/")
 for hdr in content-security-policy strict-transport-security x-frame-options x-content-type-options referrer-policy permissions-policy; do
   if echo "$h" | grep -qi "^$hdr:"; then echo "  ok   $hdr"; else echo "  FAIL missing $hdr"; fail=1; fi

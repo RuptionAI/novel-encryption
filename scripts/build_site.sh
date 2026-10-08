@@ -25,6 +25,7 @@ cp -R "$ROOT/site/." "$DIST/"
 cp "$ROOT/catalog/catalog.json" "$DIST/novels/catalog.json"
 cp "$ROOT"/catalog/texts/*.txt "$DIST/novels/"
 cp "$ROOT/docs/WHITEPAPER.md" "$DIST/WHITEPAPER.md"
+cp "$ROOT/docs/novel-encryption-whitepaper.pdf" "$DIST/"   # built by scripts/build_pdf.sh
 # Render the white paper to HTML now, so the page needs no script to show it.
 cargo run -q --release -p novel-encryption --example render_whitepaper -- \
   "$ROOT/site/whitepaper.html" "$DIST/whitepaper.html"

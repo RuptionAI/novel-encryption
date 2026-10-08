@@ -22,6 +22,8 @@ up "*.json" "application/json; charset=utf-8" "$SHORT"
 up "*.md" "text/markdown; charset=utf-8" "$SHORT"
 up "novels/*.txt" "text/plain; charset=utf-8" "$LONG"
 up "*.woff2" "font/woff2" "$LONG"
+up "*.png" "image/png" "$SHORT"
+up "*.pdf" "application/pdf" "$SHORT"
 # Remove files that are no longer part of the site (everything current was
 # just uploaded above, so this only deletes).
 awsm s3 sync "$DIST" "s3://$NE_BUCKET" --delete --size-only --only-show-errors
