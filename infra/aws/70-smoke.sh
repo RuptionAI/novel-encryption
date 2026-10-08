@@ -2,7 +2,9 @@
 # Check the live site: pages, types and security headers.
 source "$(dirname "$0")/lib.sh"
 dry && exit 0
-base="https://$(load dist_domain)"
+# SMOKE_HOST=novelencryption.com tests the custom domain instead.
+host="${SMOKE_HOST:-$(load dist_domain)}"
+base="https://$host"
 say "smoke $base"
 fail=0
 check() {  # check <path> <expected content-type prefix>
@@ -21,6 +23,6 @@ h=$(curl -sSI "$base/")
 for hdr in content-security-policy strict-transport-security x-frame-options x-content-type-options referrer-policy permissions-policy; do
   if echo "$h" | grep -qi "^$hdr:"; then echo "  ok   $hdr"; else echo "  FAIL missing $hdr"; fail=1; fi
 done
-code=$(curl -s -o /dev/null -w '%{http_code}' "http://$(load dist_domain)/")
+code=$(curl -s -o /dev/null -w '%{http_code}' "http://$host/")
 [[ "$code" == 301 ]] && echo "  ok   http → https" || { echo "  FAIL http gave $code"; fail=1; }
 exit $fail

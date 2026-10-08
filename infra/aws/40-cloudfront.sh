@@ -97,9 +97,20 @@ else
   # Lay our config over the live one so fields we never set survive.
   config=$(python3 - "$live" "$config" <<'PY'
 import json, sys
-live = json.loads(sys.argv[1])["DistributionConfig"]; ours = json.loads(sys.argv[2])
-live.update(ours)
-print(json.dumps(live))
+REPLACE = {"ViewerCertificate", "Aliases"}  # members are mutually exclusive: replace whole
+def key(d):
+    return d.get("Id") or d.get("PathPattern") if isinstance(d, dict) else None
+def merge(base, ours):
+    if isinstance(base, dict) and isinstance(ours, dict):
+        out = dict(base)
+        for k, v in ours.items():
+            out[k] = merge(base[k], v) if k in base and k not in REPLACE else v
+        return out
+    if isinstance(base, list) and isinstance(ours, list) and ours and all(key(x) for x in ours):
+        live = {key(x): x for x in base if key(x)}
+        return [merge(live[key(x)], x) if key(x) in live else x for x in ours]
+    return ours
+print(json.dumps(merge(json.loads(sys.argv[1])["DistributionConfig"], json.loads(sys.argv[2]))))
 PY
 )
   awsm cloudfront update-distribution --id "$existing" --if-match "$etag" --distribution-config "$config" >/dev/null
