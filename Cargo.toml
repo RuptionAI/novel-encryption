@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = ["crates/novel-encryption", "crates/novelenc-cli", "crates/novel-encryption-wasm"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Jeff Pittman <jeff.pittman@gmail.com>", "Ruption AI"]
+repository = "https://github.com/RuptionAI/novel-encryption"
+homepage = "https://novelencryption.com"
+
+[workspace.dependencies]
+novel-encryption = { path = "crates/novel-encryption" }
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3

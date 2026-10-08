@@ -1,0 +1,19 @@
+[package]
+name = "novel-encryption-wasm"
+description = "WebAssembly bindings for Novel Encryption (novelencryption.com)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+novel-encryption.workspace = true
+wasm-bindgen = "=0.2.128"
+getrandom = { version = "0.2", features = ["js"] }
+js-sys = "0.3"

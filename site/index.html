@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Novel Encryption</title>
+  <meta name="description" content="Turn any book into a key. Draw a chain of words from a public-domain novel and use it to lock and unlock your data, right in your browser.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='8' y='6' width='40' height='52' rx='3' fill='%238a2b22'/%3E%3Crect x='14' y='6' width='34' height='52' rx='2' fill='%23b8432f'/%3E%3Ccircle cx='46' cy='38' r='9' fill='none' stroke='%23e9c46a' stroke-width='4'/%3E%3Crect x='44' y='44' width='4' height='14' fill='%23e9c46a'/%3E%3C/svg%3E">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap">
+      <p class="eyebrow">A public-domain library, put to new use</p>
+      <h1>Novel <em>Encryption</em></h1>
+      <p class="lede">Every book is a key. Choose a novel, draw a chain of words from its pages,
+        and use that chain to lock and unlock your data.</p>
+      <nav class="top-nav">
+        <a href="#shelf">1 · Choose a book</a>
+        <a href="#key">2 · Draw a key</a>
+        <a href="#seal">3 · Seal &amp; open</a>
+        <a href="whitepaper.html">White paper</a>
+      </nav>
+      <p class="privacy-note"><span aria-hidden="true">❦</span> Your book, key and data never leave this browser.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 1. Shelf -->
+    <section id="shelf" class="step">
+      <header class="step-head">
+        <span class="step-no">I.</span>
+        <div>
+          <h2>Choose a book</h2>
+          <p>The book supplies the vocabulary your key is drawn from, and every key and message is bound to it.
+            Pick from the shelf of public-domain classics, or bring your own plain-text book.</p>
+        </div>
+      </header>
+
+      <div id="catalog" class="catalog" role="list" aria-label="Novel catalog">
+        <p class="muted">Opening the card catalog…</p>
+      </div>
+
+      <div class="own-book">
+        <label class="card own-card" for="own-file">
+          <span class="card-call">BYO</span>
+          <span class="card-title">Bring your own book</span>
+          <span class="card-meta">Any plain-text (.txt) work. Keep the exact file: a different edition makes a different key space.</span>
+          <span class="btn btn-ghost">Choose a .txt file…</span>
+          <input id="own-file" type="file" accept=".txt,text/plain" hidden>
+        </label>
+      </div>
+
+      <div id="book-status" class="book-status" aria-live="polite" hidden></div>
+    </section>
+
+    <!-- 2. Key -->
+    <section id="key" class="step" aria-disabled="true">
+      <header class="step-head">
+        <span class="step-no">II.</span>
+        <div>
+          <h2>Draw a key</h2>
+          <p>Your key is a passage drawn at random from the book's own sentences: every three words in a row appear together
+            somewhere in it, so the key reads like the book. Its strength is measured exactly, and a mistyped or misplaced word breaks it.
+            Want something short enough to memorize? Choose a letter chain instead.</p>
+        </div>
+      </header>
+
+      <div class="panel">
+        <div class="depth">
+          <span class="label">Key style</span>
+          <div class="seg" role="radiogroup" aria-label="Key style">
+            <label><input type="radio" name="style" value="narrative" checked> Narrative passage <small>(reads like the book)</small></label>
+            <label><input type="radio" name="style" value="chain"> Letter chain <small>(shorter, to memorize)</small></label>
+          </div>
+        </div>
+        <div class="depth">
+          <span class="label">Strength</span>
+          <div class="seg" role="radiogroup" aria-label="Strength">
+            <label><input type="radio" name="depth" value="bits" checked> 128-bit <small>(recommended)</small></label>
+            <label title="For secrets that must stay safe for decades, even against future quantum computers"><input type="radio" name="depth" value="long"> Long-term <small>(256-bit)</small></label>
+            <label><input type="radio" name="depth" value="words"> Exact length</label>
+          </div>
+          <div class="words-ctl" hidden>
+            <input id="depth-words" type="range" min="4" max="60" value="16" aria-label="Number of words">
+            <output id="depth-words-out">16 words</output>
+          </div>
+        </div>
+        <button id="gen-btn" class="btn btn-primary" disabled>Draw a key from the book</button>
+
+        <div id="chain" class="chain" aria-live="polite"></div>
+
+        <label class="label" for="key-input">Your key</label>
+        <textarea id="key-input" class="key-input" rows="7" spellcheck="false" autocomplete="off"
+          placeholder="Draw a key above, or type or paste one you already have"></textarea>
+        <div class="key-row">
+          <div id="key-check" class="key-check" aria-live="polite"></div>
+          <div class="key-actions">
+            <button id="key-copy" class="btn btn-small" disabled>Copy key</button>
+            <button id="key-save" class="btn btn-small" disabled>Save as .txt</button>
+          </div>
+        </div>
+        <div class="meter" aria-hidden="true"><div id="meter-fill"></div><span class="meter-mark meter-mark-128">128</span></div>
+        <p class="fine">Write your key down and keep it with the name of the book. Lose either, and the data stays locked. There is no reset.</p>
+      </div>
+    </section>
+
+    <!-- 3. Seal & open -->
+    <section id="seal" class="step" aria-disabled="true">
+      <header class="step-head">
+        <span class="step-no">III.</span>
+        <div>
+          <h2>Seal &amp; open</h2>
+          <p>Lock a note or a file with the book and key. To open it, you need the same book and the same key.</p>
+        </div>
+      </header>
+
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-seal" aria-selected="true" aria-controls="pane-seal">Seal</button>
+        <button role="tab" id="tab-open" aria-selected="false" aria-controls="pane-open">Open</button>
+      </div>
+
+      <div id="pane-seal" class="panel pane" role="tabpanel" aria-labelledby="tab-seal">
+        <label class="label" for="seal-text">Message</label>
+        <textarea id="seal-text" rows="5" placeholder="Write something worth keeping…"></textarea>
+        <div class="file-row">
+          <label class="btn btn-small btn-ghost" for="seal-file">…or seal a file</label>
+          <input id="seal-file" type="file" hidden>
+          <span id="seal-file-name" class="muted"></span>
+          <button id="seal-file-clear" class="link-btn" hidden>clear</button>
+        </div>
+
+        <fieldset class="armor">
+          <legend class="label">Output</legend>
+          <label><input type="radio" name="armor" value="story" checked> <strong>A lost chapter</strong> <small>A new passage in the book’s voice that carries your message</small></label>
+          <label><input type="radio" name="armor" value="novel"> <strong>Book words</strong> <small>One of the book’s words per byte; shorter</small></label>
+          <label><input type="radio" name="armor" value="compact"> <strong>Short code</strong> <small>One line for chat, SMS or a QR code</small></label>
+          <label><input type="radio" name="armor" value="text"> <strong>Text block</strong> <small>With BEGIN/END lines, for email</small></label>
+          <label><input type="radio" name="armor" value="binary"> <strong>File</strong> <small>A .novl download</small></label>
+        </fieldset>
+
+        <button id="seal-btn" class="btn btn-primary" disabled>Seal it</button>
+        <div id="seal-status" class="status" aria-live="polite"></div>
+        <div id="seal-out-wrap" class="out" hidden>
+          <textarea id="seal-out" rows="14" readonly spellcheck="false"></textarea>
+          <div class="out-actions">
+            <button id="seal-copy" class="btn btn-small">Copy</button>
+            <button id="seal-dl" class="btn btn-small">Download</button>
+          </div>
+        </div>
+        <p class="fine">Book-prose output is an encoding of the sealed message, not an extra layer of secrecy, and it
+          will not pass for real prose under close reading. The protection comes from Argon2id and XChaCha20-Poly1305.</p>
+      </div>
+
+      <div id="pane-open" class="panel pane" role="tabpanel" aria-labelledby="tab-open" hidden>
+        <label class="label" for="open-text">Sealed message</label>
+        <textarea id="open-text" rows="6" spellcheck="false" placeholder="Paste a lost chapter, book words, a short code or a text block here"></textarea>
+        <div class="file-row">
+          <label class="btn btn-small btn-ghost" for="open-file">…or open a .novl file</label>
+          <input id="open-file" type="file" hidden>
+          <span id="open-file-name" class="muted"></span>
+          <button id="open-file-clear" class="link-btn" hidden>clear</button>
+        </div>
+        <button id="open-btn" class="btn btn-primary" disabled>Open it</button>
+        <div id="open-status" class="status" aria-live="polite"></div>
+        <div id="open-out-wrap" class="out" hidden>
+          <textarea id="open-out" rows="6" readonly></textarea>
+          <div class="out-actions">
+            <button id="open-copy" class="btn btn-small">Copy</button>
+            <button id="open-dl" class="btn btn-small">Download</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="how">
+      <h2>How it works</h2>
+      <ol class="how-list">
+        <li><strong>The book becomes a word list.</strong> Every word in the novel is folded to lowercase letters
+          (numbers and punctuation drop away), and the book is fingerprinted by its vocabulary.</li>
+        <li><strong>The key is a chain.</strong> A first word is drawn at random from the book, then each next word at
+          random from the words that start with the previous word’s last letter. The page counts the exact strength in bits.</li>
+        <li><strong>The lock is standard cryptography.</strong> Your book’s fingerprint and key are stretched with
+          Argon2id and seal the data with XChaCha20-Poly1305, the same building blocks used by modern password managers and messaging apps.</li>
+        <li><strong>The book is part of the lock.</strong> The same words from a different book open nothing. The book
+          does not need to be secret, since anyone can read <em>Moby-Dick</em>; the randomly drawn chain is what must be kept private.</li>
+      </ol>
+      <p><a href="whitepaper.html">Read the white paper →</a></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>Published by Ruption AI and Jeff Pittman · Open source at
+        <a href="https://github.com/RuptionAI/novel-encryption">github.com/RuptionAI/novel-encryption</a> ·
+        Texts from <a href="https://www.gutenberg.org/">Project Gutenberg</a> (public domain)</p>
+    </div>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

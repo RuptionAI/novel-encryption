@@ -1,0 +1,86 @@
+{
+  "decrypt_only": [
+    {
+      "note": "deflate-compressed payload",
+      "plaintext": "Alice was beginning to get very tired of sitting by her sister on the bank. Alice was beginning to get very tired of sitting by her sister on the bank. Alice was beginning to get very tired of sitting by her sister on the bank. Alice was beginning to get very tired of sitting by her sister on the bank. Alice was beginning to get very tired of sitting by her sister on the bank. Alice was beginning to get very tired of sitting by her sister on the bank. Alice was beginning to get very tired of sitting by her sister on the bank. Alice was beginning to get very tired of sitting by her sister on the bank. ",
+      "sealed": "e0000400000100000001101112131415161718191a1b1c1d1e1f276907257c4c4ee51ee49aa696855647997d89debf327dc285a2c89af22ee2e73dbef05b6462f13bf4eb712bae21905af7d0c92341933462d5204d55357e59204361b5b0adfb44492c97f77b34ac45bd2fecc6021b922a72f31f66e6e6ed"
+    }
+  ],
+  "key": {
+    "bits": "123.677599",
+    "phrase": "abide-each-had-dainties-sad-dainties-sad-dainties-sad-dainties-sad-dainties-sad-dainties-sad-dainties"
+  },
+  "key_tokenize": [
+    {
+      "input": "It's, AHAB'S—ship. Café",
+      "output": [
+        "its",
+        "ahabs",
+        "ship",
+        "cafe"
+      ]
+    }
+  ],
+  "narrative": {
+    "first_walk_30": "alices adventures in wonderland by lewis carroll contents down the rabbit in a very deep or she fell very slowly and sadly will you come to the beginning the king",
+    "first_walk_30_bits": "43.785378",
+    "first_walk_30_display": "Alice's adventures in Wonderland. By Lewis Carroll. Contents. Down the Rabbit in a very deep, or she fell very slowly and sadly: will you come to the beginning, the King.",
+    "live_trigrams": 22973,
+    "start_contexts": 990
+  },
+  "novel": {
+    "armor_table_first_8": [
+      "the",
+      "and",
+      "she",
+      "said",
+      "you",
+      "alice",
+      "was",
+      "that"
+    ],
+    "distinct_words": 2576,
+    "file": "catalog/texts/alice-in-wonderland.txt",
+    "fingerprint": "5fe03759accb91bf8a97e60dd4b2c6f1f04a95150f2134c824f88e61967193c4",
+    "key_vocabulary": 2521,
+    "total_words": 27427
+  },
+  "seal": {
+    "compact_armor": "4AAEAAABAAAAAQABAgMEBQYHCAkKCwwNDg9ij8CvtXhwf-8G6QNNlj1MzmtX8z4aooXq45D9LxVH7w_tse7EXtYEIw",
+    "novel_armor": "Baby the you the the and the the the and the and she said. You alice\nwas that her all with had but for. They not great rather perhaps feet\neat made right look saw. Was footman said voice sure are never turned\nlast round suppose rabbit. Then find make hear both shall close did one\nhead saw not ought please. Remember spoke two gave you have.\n",
+    "params": {
+      "compress": false,
+      "m_kib": 1024,
+      "p": 1,
+      "t": 1
+    },
+    "plaintext": "Curiouser and curiouser!",
+    "salt": "000102030405060708090a0b0c0d0e0f",
+    "sealed": "e0000400000100000001000102030405060708090a0b0c0d0e0f628fc0afb578707fef06e9034d963d4cce6b57f33e1aa285eae390fd2f1547ef0fedb1eec45ed60423",
+    "story_armor": "ALICE: A LOST CHAPTER\n\nSaid the King, and don't be all day to-day and this was not a moment to\nbe a very good-naturedly began hunting about, and when she had never\nbeen in a low voice to the other side of the house, and have next to her\nthat she was now about a thousand times as large as the March Hare and\nthe moral of that is, but I don't know what it might be some sense in\nyour pocket? He went mad, you know the way down one side to look down\nand the Queen, and in she went down on her hand, and a large Rabbit-hole\nwent straight on like a tea-tray in the distance, sitting sad and she\nwent on in the distance would take the roof of the way the people that\nwalk with their heads down, I think. And she went in without knocking,\nand hurried off. Alice thought to herself, I wish the creatures wouldn't\nbe so easily offended! You'll get used up, but it was the best Cat in\nthe pool of tears, I do wish I hadn't quite finished my tea — not\nabove a week: he taught Laughing and Grief, they used to do it in the\nair! Do you take me for asking such a nice soft thing to be no chance of\ngetting up and said to the table, but it was very likely it can talk: at\nany rate, said Alice, a little way off, panting, with its head\nimpatiently, and said nothing but looked at Alice, as the March Hare\nsaid to a day or two to think about stopping herself before she had\ngrown up, she said to a shriek, and a great many more than that: then\nagain before its done by everybody minding their own business, the King,\nthat only the March Hare and his friends shared their never-ending meal,\nand the Queen said the Hatter went on without attending to her ear and\nleft foot, so as to size, Alice hastily replied; only one who got any\nadvantage from the change: and Alice was not going to do, said Alice\nvery much what would become of me left to make out at all in bed!\n\nOn various pretexts they all returned from him to be no mistake about\nit, and, as she could. The next witness would be very likely it can\ntalk: at any rate it would be the use of this sort in her life before,\nand things are put out here? She asked. Yes, that's it, said the\nCaterpillar took the thimble, saying we beg your acceptance of this sort\nof way to change them! When she got back to her great delight it fitted!\nAlice opened the door, she found to be a little way out.\n\nI shall do nothing of the sort, said the Hatter, and the little passage,\nand then she looked at her feet in the air, and, after waiting till she\nwas quite out of the house.\n",
+    "text_armor": "-----BEGIN NOVEL ENCRYPTION MESSAGE-----\n4AAEAAABAAAAAQABAgMEBQYHCAkKCwwNDg9ij8CvtXhwf+8G6QNNlj1MzmtX8z4a\nooXq45D9LxVH7w/tse7EXtYEIw==\n-----END NOVEL ENCRYPTION MESSAGE-----\n"
+  },
+  "seal_standard_profile": {
+    "plaintext": "Curiouser and curiouser!",
+    "salt": "000102030405060708090a0b0c0d0e0f",
+    "sealed": "e1000102030405060708090a0b0c0d0e0ffd0108cb511069454c91df8911d94bcfbb24cefcbb991e7f9f1cf69e33de6092fc076adcb544c2bbea"
+  },
+  "spec": "NovelEncryption v1",
+  "tokenize": [
+    {
+      "input": "Café naïve, DON'T stop—1984 times! Ahab’s x2y",
+      "output": [
+        "cafe",
+        "naive",
+        "don",
+        "t",
+        "stop",
+        "times",
+        "ahab",
+        "s",
+        "x",
+        "y"
+      ]
+    }
+  ]
+}
