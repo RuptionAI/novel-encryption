@@ -64,7 +64,11 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; background: var(--paper); }
+/* boot.js holds the page until its fonts arrive, then fades it in once. */
+body { transition: opacity 0.22s ease-out; }
+html.fonts-loading body { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { body { transition: none; } }
 body {
   margin: 0;
   background: var(--paper);
@@ -326,7 +330,7 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .tabs button[aria-selected="true"] { background: var(--card); color: var(--accent); }
 .pane { border-top-left-radius: 0; }
 
-.file-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 10px; font-size: 0.9rem; }
+.file-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-block: 12px 22px; font-size: 0.9rem; }
 .file-row .muted { overflow-wrap: anywhere; }
 .armor { border: none; padding: 0; margin: 8px 0 16px; display: grid; gap: 6px; }
 .armor label { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }

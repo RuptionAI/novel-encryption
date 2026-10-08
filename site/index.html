@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f6efe1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1712" media="(prefers-color-scheme: dark)">
   <title>Novel Encryption</title>
   <meta name="description" content="Turn any book into a key, and your messages into lost chapters. Draw a key that reads like a passage from a public-domain classic, then seal your data with it, entirely in your browser.">
   <meta property="og:type" content="website">
@@ -21,16 +24,18 @@
   <link rel="preload" href="fonts/EBGaramond-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/CourierPrime-400-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/CourierPrime-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/EBGaramond-400i-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="style.css">
+  <script src="boot.js"></script>
 </head>
 <body>
   <header class="masthead">
     <div class="wrap">
       <p class="eyebrow">A public-domain library, put to new use</p>
       <h1>Novel <em>Encryption</em></h1>
-      <p class="lede">Every book is a key. Choose a novel, draw a chain of words from its pages,
-        and use that chain to lock and unlock your data.</p>
+      <p class="lede">Every book is a key. Choose a classic, draw a key that reads like a passage
+        from it, and seal your messages as lost chapters of the book.</p>
       <nav class="top-nav">
         <a href="#shelf">1 · Choose a book</a>
         <a href="#key">2 · Draw a key</a>
