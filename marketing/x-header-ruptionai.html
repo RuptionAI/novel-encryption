@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Ruption AI X header</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Courier+Prime:wght@400;700&display=block" rel="stylesheet">
+<style>
+  /* Ruption AI X header, 1500x500. Keep text out of the avatar (lower left)
+     and out of the top/bottom bands phones crop. */
+  :root { --navy: #1b3a82; --navy-deep: #142d68; --white: #ffffff; --mist: #c9d5f0; --gold: #e3c27a; }
+  html, body { margin: 0; width: 1500px; height: 500px; overflow: hidden; }
+  body { background: radial-gradient(ellipse 70% 120% at 70% 40%, var(--navy) 0%, var(--navy-deep) 100%); position: relative;
+         font-family: "Source Serif 4", Georgia, serif; color: var(--white); }
+  /* Faint ruled lines, like a ledger page: security you can read. */
+  body::before { content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(to bottom, transparent 0 35px, rgba(255,255,255,0.045) 35px 36px); }
+  .copy { position: absolute; left: 470px; right: 90px; top: 112px; }
+  h1 { margin: 0; font-weight: 400; font-size: 64px; line-height: 1.05; letter-spacing: -0.005em; }
+  .sub { margin: 14px 0 0; font: 400 21px "Courier Prime", monospace; color: var(--mist); letter-spacing: 0.06em; }
+  .launch { margin-top: 44px; display: flex; align-items: baseline; gap: 16px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.22); }
+  .tag { font: 700 16px "Courier Prime", monospace; letter-spacing: 0.16em; color: var(--navy-deep); background: var(--gold); padding: 4px 10px 3px; border-radius: 2px; }
+  .launch p { margin: 0; font-size: 28px; }
+  .launch em { color: var(--gold); font-style: italic; }
+  .url { position: absolute; right: 90px; bottom: 74px; font: 400 20px "Courier Prime", monospace; color: var(--mist); letter-spacing: 0.04em; }
+</style></head>
+<body>
+  <div class="copy">
+    <h1>Robust, memory-safe cybersecurity.</h1>
+    <p class="sub">BUILT IN RUST · OPEN SOURCE · RUPTION AI</p>
+    <div class="launch"><span class="tag">NEW</span><p><em>Novel Encryption</em>: turn any book into a key.</p></div>
+  </div>
+  <div class="url">novelencryption.com</div>
+</body></html>
