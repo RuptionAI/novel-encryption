@@ -41,6 +41,22 @@ usually smaller than the originals. Armor: `story` writes the message as a lost 
 of the book, `novel` as one book word per byte, `compact` as one base64url line (default
 on stdout), `text` as a BEGIN/END block, and `binary` as raw bytes (default with `-o`).
 
+## Wallet backups
+
+Write a crypto wallet's BIP-39 recovery phrase (12–24 words) into a book, and back:
+
+```sh
+novelenc seed to   catalog/texts/king-james-bible.txt                # passage (~124 words for 24)
+novelenc seed to   catalog/texts/king-james-bible.txt --style chain  # chain (~35 words; 34–48 by book)
+novelenc seed from catalog/texts/king-james-bible.txt -i backup.txt  # back to the phrase
+```
+
+The book form carries exactly the phrase's entropy plus a 32-bit check bound to the book,
+so it always restores the original phrase and rejects the wrong book, changed words, or
+text copied from the book. For people who prefer a browser, `tools/novel-seed-offline.html`
+is one self-contained file that cannot reach the network; open it with your computer
+offline. Treat the book-form backup exactly like the phrase itself.
+
 ## The catalog
 
 Thirteen public-domain books from Project Gutenberg, pinned by fingerprint in
@@ -63,6 +79,7 @@ works, including your own.
 | `site/` | novelencryption.com source (`scripts/build_site.sh` → `dist/`) |
 | `catalog/` | public-domain texts, sources and fingerprints |
 | `infra/aws/` | hosting on AWS: S3 + CloudFront + Route 53 (`./deploy.sh`) |
+| `tools/` | offline wallet-backup page (`scripts/build_seed_tool.sh`) |
 | `docs/SPEC.md` | byte-exact specification |
 | `docs/WHITEPAPER.md` | design, measurements and security analysis ([PDF](docs/novel-encryption-whitepaper.pdf); rebuild with `scripts/build_pdf.sh`) |
 | `vectors/v1.json` | conformance vectors for other-language ports |

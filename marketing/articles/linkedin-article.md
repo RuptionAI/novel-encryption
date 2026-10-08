@@ -37,7 +37,7 @@ In a single day the project went from idea to launch:
 - an open-source Rust library and command-line tool;
 - a website that runs entirely in the browser, with a catalog of twelve public-domain classics and the King James Bible;
 - a byte-exact specification with test vectors for other implementations;
-- a 17-page white paper covering the design, measurements and security analysis, including a section on why the original idea fails.
+- an 18-page white paper covering the design, measurements and security analysis, including a section on why the original idea fails.
 
 I built it with Claude Code as my pair programmer. The project has not yet been independently audited, and I welcome review from the security community.
 
@@ -47,7 +47,7 @@ I built it with Claude Code as my pair programmer. The project has not yet been 
 
 **For security professionals:** the specification, test vectors and white paper are public. I would value your critique.
 
-**Coming next:** a converter that writes a crypto wallet's 24-word backup phrase as a passage from a book you love, and back again.
+**Also built today:** an offline converter that writes a crypto wallet's 24-word backup phrase as a passage from a book you love, or as a short chain of its words, and back again. A 32-bit check bound to the book rejects the wrong book, a changed word, or text simply copied from the book.
 
 Books are read and then shelved. Now they can also keep a secret.
 

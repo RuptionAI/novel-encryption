@@ -40,7 +40,7 @@ Fan fiction that only your key can read. Anyone else just holds a strange new ch
 
 ## From idea to launch in a day
 
-By tonight there was a Rust library and command-line tool, a website that runs entirely in your browser, a byte-exact specification, and a 17-page white paper. The paper includes the section on why my first idea fails. I built it with Claude Code as my pair programmer.
+By tonight there was a Rust library and command-line tool, a website that runs entirely in your browser, a byte-exact specification, and an 18-page white paper. The paper includes the section on why my first idea fails. I built it with Claude Code as my pair programmer.
 
 The shelf has twelve public-domain classics and the King James Bible, which gives the shortest keys of all. You can also bring your own book.
 
@@ -49,7 +49,7 @@ It's open source. It hasn't been independently audited yet, and reviews are welc
 ## What's next
 
 - **Libraries:** "Encrypt with a Classic" workshops, book clubs trading lost chapters, a key bookmark at the circulation desk. If your library wants to try it, my DMs are open.
-- **Wallet backups:** a crypto wallet's 24-word backup phrase written as a passage from a book you love, and converted back whenever you need it.
+- **Wallet backups (already built):** write a crypto wallet's 24-word backup phrase as a passage from a book you love, or as a short chain of its words, and convert it back whenever you need it. It runs offline, in a command-line tool or a single page that can't touch the network.
 - **Fan fiction with a plot:** lost chapters with a real storyline.
 
 Books get read, then shelved. Now they can keep a secret.

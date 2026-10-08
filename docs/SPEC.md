@@ -278,3 +278,32 @@ MUST yield a sealed message.
 fingerprint. Clients MUST verify a fetched catalog text against its fingerprint before
 use. A published text MUST never be modified; corrections are published as a new
 catalog entry.
+
+## 9. Wallet backups (BIP-39 seeds)
+
+Writes a BIP-39 recovery phrase as words from a novel, and back. The book-form
+backup carries exactly the phrase's entropy, so it always restores the original
+phrase.
+
+1. **Phrase → entropy.** Parse a 12, 15, 18, 21 or 24-word phrase against the official
+   BIP-39 English list (SHA-256 `2f5eed53…24dbda`), accepting a word's unique first four
+   letters, and verify the BIP-39 checksum.
+2. **Payload.** `P = E ‖ 0x01 ‖ SHA-256("NovelEncryption/v1/seed\n" ‖ fingerprint ‖ E)[0..4]`,
+   where `E` is the 16–32-byte entropy and `0x01` the format version. The 32-bit check
+   binds the backup to the book and rejects text that was not produced by this
+   conversion (for example, a passage copied out of the book).
+3. **Passage style.** Story-encode `P` exactly as in §7.4 steps 2–5 (with `P` in place of
+   `D`), but with `cap = 8` for the start and `cap = 3` for each later word. Render with
+   the display rules of §5.2; no heading.
+4. **Chain style.** Read `len(E) ‖ P` as bits, most significant first; bits past the end
+   read as 0. The first word is entry `v` of the sorted key vocabulary `V`; each later
+   word is entry `v` of `V_{last(previous word)}`, where `v` is the next `⌊log2 n⌋` bits
+   and `n` is the number of choices. Stop once every bit has been written. Display the
+   words joined by `-`.
+5. **Restore.** Tokenize with `tokenize_key`. Treat the text as a chain if at least 90%
+   of consecutive pairs link by letter; otherwise as a passage. Decode, verify the
+   version and the check (rejecting any mismatch), and write `E` back as a BIP-39 phrase.
+
+Implementations SHOULD run this only offline and MUST NOT accept a passage or chain that
+fails the check.
+

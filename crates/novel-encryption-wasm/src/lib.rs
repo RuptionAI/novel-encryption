@@ -107,6 +107,31 @@ impl Novel {
     }
 }
 
+/// Wallet backups (used by the offline seed tool).
+#[wasm_bindgen]
+impl Novel {
+    /// Recovery phrase → `{ passage, words, phraseWords }`. `style`: "narrative" | "chain".
+    #[wasm_bindgen(js_name = seedToPassage)]
+    pub fn seed_to_passage(&self, phrase: &str, style: &str) -> Result<JsValue, JsError> {
+        let style = match style {
+            "chain" => ne::seed::SeedStyle::Chain,
+            _ => ne::seed::SeedStyle::Narrative,
+        };
+        let p = ne::seed::to_passage(&self.0, phrase, style).map_err(js_err)?;
+        js_sys_object(&[
+            ("passage", JsValue::from_str(&p.display)),
+            ("words", JsValue::from_f64(p.words.len() as f64)),
+            ("phraseWords", JsValue::from_f64(p.phrase_words as f64)),
+        ])
+    }
+
+    /// Passage (either style) → recovery phrase.
+    #[wasm_bindgen(js_name = passageToSeed)]
+    pub fn passage_to_seed(&self, passage: &str) -> Result<String, JsError> {
+        ne::seed::from_passage(&self.0, passage).map(|p| p.to_string()).map_err(js_err)
+    }
+}
+
 /// Default Argon2id memory (KiB) and iterations, for the UI.
 #[wasm_bindgen(js_name = defaultKdf)]
 pub fn default_kdf() -> Vec<u32> {

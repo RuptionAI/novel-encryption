@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<!-- No network at all: everything this page needs is inside it. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Novel Seed (offline)</title>
+<style>
+  /* Offline wallet-backup tool: one column, plain and careful. */
+  :root { --paper: #f6efe1; --sheet: #fffaf0; --ink: #2b2118; --muted: #6b5a47; --accent: #8a2b22; --rule: #d8c7a4; --warn: #fdf1d6; --warn-edge: #b0802a; --ok: #3f6b3a; --bad: #a2321f;
+          --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  @media (prefers-color-scheme: dark) { :root { --paper: #1c1712; --sheet: #241d16; --ink: #efe4cf; --muted: #b9a88d; --accent: #e08a62; --rule: #4a3d2e; --warn: #2e2516; --warn-edge: #e0b45c; --ok: #8fbf86; --bad: #f08a72; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.5 var(--serif); padding-inline: 16px; padding-block: 28px 48px; }
+  main { max-width: 760px; margin: 0 auto; display: grid; gap: 20px; }
+  h1 { margin: 0; font-size: 2rem; line-height: 1.1; }
+  h1 small { display: block; font: 0.85rem var(--mono); color: var(--muted); letter-spacing: 0.06em; margin-top: 6px; }
+  h2 { margin: 0 0 8px; font-size: 1.2rem; }
+  .warn { background: var(--warn); border: 1px solid var(--warn-edge); border-radius: 4px; padding: 12px 16px; }
+  .warn ul { margin: 6px 0 0; padding-left: 1.2em; }
+  .card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 16px 18px; display: grid; gap: 12px; min-width: 0; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--sheet); border-color: var(--accent); }
+  button, .file { font: 700 0.9rem var(--mono); background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 3px; padding: 7px 14px; cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--sheet); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button:focus-visible, textarea:focus-visible, .file:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+  textarea { width: 100%; min-height: 6.5em; font: 1rem/1.5 var(--mono); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 10px 12px; resize: vertical; }
+  .out { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--serif); font-size: 1.05rem; background: var(--paper); border: 1px dashed var(--rule); padding: 12px 14px; border-radius: 3px; min-height: 3em; user-select: all; }
+  .out.mono { font-family: var(--mono); font-size: 0.98rem; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .muted, label.opt small { color: var(--muted); }
+  .status { font-size: 0.95rem; min-height: 1.5em; }
+  .status.ok { color: var(--ok); } .status.bad { color: var(--bad); }
+  code { font-family: var(--mono); font-size: 0.85em; overflow-wrap: anywhere; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Novel Seed<small>OFFLINE WALLET BACKUP · NOVEL ENCRYPTION V1</small></h1>
+  </header>
+
+  <section class="warn" aria-label="Before you start">
+    <b>Before you type a recovery phrase:</b>
+    <ul>
+      <li>Disconnect this computer from the internet. This page cannot reach the network (its security policy blocks every connection), but other software on your computer might.</li>
+      <li>The passage this makes is as valuable as your recovery phrase. Anyone with it and the book can take your funds.</li>
+      <li>Keep the exact book file. A different edition will not restore your phrase.</li>
+      <li>Restore the passage below to test it before you rely on it, and keep your original backup until you have.</li>
+    </ul>
+  </section>
+
+  <section class="card" aria-labelledby="book-h">
+    <h2 id="book-h">1. Choose the book</h2>
+    <div class="row">
+      <label class="file">Open a book (.txt)…<input id="book" type="file" accept=".txt,text/plain" hidden></label>
+      <span class="muted">Catalog books are on novelencryption.com/novels/ and in the GitHub repo.</span>
+    </div>
+    <p id="book-status" class="status" aria-live="polite">No book open yet.</p>
+  </section>
+
+  <section class="card" aria-labelledby="work-h">
+    <h2 id="work-h">2. Write or restore</h2>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="t-write" aria-selected="true">Phrase → book</button>
+      <button role="tab" id="t-restore" aria-selected="false">Book → phrase</button>
+    </div>
+
+    <div id="p-write" role="tabpanel">
+      <label for="phrase">Recovery phrase (12–24 BIP-39 words)</label>
+      <textarea id="phrase" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="word word word …"></textarea>
+      <div class="row">
+        <label class="opt"><input type="radio" name="style" value="narrative" checked> Passage <small>(reads like the book; 125–270 words for 24)</small></label>
+        <label class="opt"><input type="radio" name="style" value="chain"> Chain <small>(about 35–50 linked words; easiest to copy)</small></label>
+      </div>
+      <div class="row"><button id="go-write" class="primary" disabled>Write it into the book</button><button id="clear-write">Clear</button></div>
+      <p id="write-status" class="status" aria-live="polite"></p>
+      <div id="write-out" class="out" hidden></div>
+    </div>
+
+    <div id="p-restore" role="tabpanel" hidden>
+      <label for="passage">Passage or chain</label>
+      <textarea id="passage" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Paste or type the passage. Capitals, punctuation and line breaks don't matter."></textarea>
+      <div class="row"><button id="go-restore" class="primary" disabled>Restore my phrase</button><button id="clear-restore">Clear</button></div>
+      <p id="restore-status" class="status" aria-live="polite"></p>
+      <div id="restore-out" class="out mono" hidden></div>
+    </div>
+  </section>
+
+  <p class="muted">Open source: github.com/RuptionAI/novel-encryption (spec: docs/SPEC.md §9). This file runs the same Rust code as the command-line tool, compiled to WebAssembly and embedded here. Not yet independently audited.</p>
+</main>
+
+<script>
+/*GLUE*/
+</script>
+<script>
+(function () {
+  "use strict";
+  const CATALOG = /*CATALOG*/;
+  const WASM = "__WASM_BASE64__";
+  const $ = (id) => document.getElementById(id);
+  const bytes = Uint8Array.from(atob(WASM), (c) => c.charCodeAt(0));
+  wasm_bindgen.initSync({ module: bytes });
+  const { Novel } = wasm_bindgen;
+  let novel = null;
+
+  function status(id, text, kind) { const el = $(id); el.textContent = text; el.className = "status" + (kind ? " " + kind : ""); }
+  function ready() {
+    $("go-write").disabled = !novel || !$("phrase").value.trim();
+    $("go-restore").disabled = !novel || !$("passage").value.trim();
+  }
+
+  $("book").addEventListener("change", async (e) => {
+    const f = e.target.files[0]; e.target.value = "";
+    if (!f) return;
+    status("book-status", "Reading " + f.name + "…");
+    await new Promise((r) => setTimeout(r, 30));
+    try {
+      if (novel) novel.free();
+      novel = new Novel(await f.text());
+      const fp = novel.fingerprint;
+      const known = CATALOG.find((n) => n.fingerprint === fp);
+      status("book-status", known
+        ? "Ready: " + known.title + " (" + known.author + "), the catalog edition. Fingerprint " + fp.slice(0, 16) + "…"
+        : "Ready: " + f.name + ". Not a catalog edition, so keep this exact file. Fingerprint " + fp.slice(0, 16) + "…", "ok");
+    } catch (err) { novel = null; status("book-status", String(err.message || err), "bad"); }
+    ready();
+  });
+
+  function tab(which) {
+    const w = which === "write";
+    $("t-write").setAttribute("aria-selected", String(w)); $("t-restore").setAttribute("aria-selected", String(!w));
+    $("p-write").hidden = !w; $("p-restore").hidden = w;
+  }
+  $("t-write").addEventListener("click", () => tab("write"));
+  $("t-restore").addEventListener("click", () => tab("restore"));
+  $("phrase").addEventListener("input", ready);
+  $("passage").addEventListener("input", ready);
+
+  $("go-write").addEventListener("click", () => {
+    const style = document.querySelector('input[name="style"]:checked').value;
+    try {
+      const r = novel.seedToPassage($("phrase").value, style);
+      $("write-out").textContent = r.passage; $("write-out").hidden = false;
+      status("write-status", r.words + " words carry your " + r.phraseWords + "-word phrase. Now test it: copy it into “Book → phrase”.", "ok");
+    } catch (err) { $("write-out").hidden = true; status("write-status", String(err.message || err), "bad"); }
+  });
+  $("go-restore").addEventListener("click", () => {
+    try {
+      $("restore-out").textContent = novel.passageToSeed($("passage").value); $("restore-out").hidden = false;
+      status("restore-status", "Restored. Check it against your original backup.", "ok");
+    } catch (err) { $("restore-out").hidden = true; status("restore-status", String(err.message || err), "bad"); }
+  });
+  const clear = (ids) => () => { ids.forEach((id) => { const el = $(id); if ("value" in el) el.value = ""; else { el.textContent = ""; el.hidden = true; } }); ready(); };
+  $("clear-write").addEventListener("click", clear(["phrase", "write-out", "write-status"]));
+  $("clear-restore").addEventListener("click", clear(["passage", "restore-out", "restore-status"]));
+  window.addEventListener("pagehide", () => { $("phrase").value = ""; $("passage").value = ""; });
+})();
+</script>
+</body>
+</html>

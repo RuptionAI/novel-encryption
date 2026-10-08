@@ -40,6 +40,7 @@ pub mod narrative;
 pub mod novel;
 pub mod rng;
 pub mod seal;
+pub mod seed;
 
 pub use armor::Armor;
 pub use error::{Error, Result};

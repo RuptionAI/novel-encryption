@@ -7,6 +7,7 @@ use novel_encryption::{
     armor, check_key, decrypt, encrypt, generate, Armor, KdfParams, KeyLength, KeyPhrase, KeyStyle,
     Novel, SealOptions, DEFAULT_KEY_BITS, LONG_TERM_KEY_BITS,
 };
+use novel_encryption::seed::{self, SeedStyle};
 use zeroize::Zeroizing;
 
 /// Novel Encryption: keys drawn from a novel as a chain of words, data sealed
@@ -80,10 +81,31 @@ enum Cmd {
         #[command(flatten)]
         io: Io,
     },
+    /// Wallet backups: write a BIP-39 recovery phrase as a book passage, and back.
+    #[command(subcommand)]
+    Seed(SeedCmd),
     /// Detailed key-space and typo-detection analysis (used for the white paper).
     Analyze {
         #[arg(required = true)]
         novels: Vec<PathBuf>,
+    },
+}
+
+#[derive(Subcommand)]
+enum SeedCmd {
+    /// Recovery phrase → passage. The phrase is read from a hidden prompt (or stdin).
+    To {
+        novel: PathBuf,
+        /// narrative: reads like the book (~125–270 words for 24 words).
+        /// chain: ~35–50 linked words, practical to copy by hand.
+        #[arg(long, value_enum, default_value_t = StyleArg::Narrative)]
+        style: StyleArg,
+    },
+    /// Passage → recovery phrase. The passage is read from -i FILE or stdin.
+    From {
+        novel: PathBuf,
+        #[arg(short, long)]
+        input: Option<PathBuf>,
     },
 }
 
@@ -234,6 +256,32 @@ fn run(cli: Cli) -> Res<()> {
             let (bytes, _) = armor::decode_any(&novel, &read_input(&io)?).map_err(|e| e.to_string())?;
             let plain = Zeroizing::new(decrypt(&novel, &key, &bytes).map_err(|e| e.to_string())?);
             write_output(&io, &plain)?;
+        }
+        Cmd::Seed(SeedCmd::To { novel, style }) => {
+            let novel = load_novel(&novel)?;
+            let phrase = Zeroizing::new(if std::io::stdin().is_terminal() {
+                rpassword::prompt_password("Recovery phrase (hidden): ").map_err(|e| e.to_string())?
+            } else {
+                let mut s = String::new();
+                std::io::stdin().read_to_string(&mut s).map_err(|e| e.to_string())?;
+                s
+            });
+            let style = if style == StyleArg::Chain { SeedStyle::Chain } else { SeedStyle::Narrative };
+            let p = seed::to_passage(&novel, &phrase, style).map_err(|e| e.to_string())?;
+            println!("{}", p.display);
+            eprintln!(
+                "{} words carrying your {}-word recovery phrase. Anyone with this passage and the book can \
+                 take your funds: store it like the phrase itself. Test a restore before relying on it.",
+                p.words.len(),
+                p.phrase_words
+            );
+        }
+        Cmd::Seed(SeedCmd::From { novel, input }) => {
+            let novel = load_novel(&novel)?;
+            let text = Zeroizing::new(read_input(&Io { input, output: None })?);
+            let text = std::str::from_utf8(&text).map_err(|_| "the passage is not UTF-8 text".to_string())?;
+            let phrase = seed::from_passage(&novel, text).map_err(|e| e.to_string())?;
+            println!("{}", *phrase);
         }
         Cmd::Analyze { novels } => {
             for p in novels {

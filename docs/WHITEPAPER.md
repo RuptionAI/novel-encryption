@@ -354,6 +354,34 @@ still reveals roughly how long the message is. Their job is to make an encrypted
 belong to the book, and to need that same book to decode. Even the *container* of a
 Moby-Dick message is written in Moby-Dick's words.
 
+### 5.8 Wallet backups
+
+Cryptocurrency wallets back up their secret as a 12–24-word recovery phrase from the
+BIP-39 standard, which encodes 128–256 bits of entropy. Novel Encryption can write that
+same entropy into a book: as a **passage** (a story encoding, like a lost chapter, with
+up to 3 bits per word) or as a **letter chain** (about 9 bits per word). Because both
+forms carry exactly the phrase's bits, the book-form backup always converts back to the
+original phrase, which works with every standard wallet.
+
+| Book | 24-word phrase as a passage | 24-word phrase as a chain |
+|---|---:|---:|
+| The King James Bible | ~124 words | ~35 words |
+| Pride and Prejudice | ~178 words | ~41 words |
+| Moby-Dick | ~194 words | ~34 words |
+| Alice's Adventures in Wonderland | ~272 words | ~48 words |
+
+The conversion adds a 32-bit check computed from the book's fingerprint and the entropy.
+It serves two purposes. First, restoring with the wrong book, or after a word was changed,
+fails instead of producing a different wallet. Second, it guards against the
+**brain-wallet** failure, in which people chose a memorable phrase themselves and lost
+their funds to attackers who guessed it. A passage copied out of the book has about a
+one-in-four-billion chance of passing the check, so the tool will not turn chosen text
+into a wallet. The randomness always comes from the wallet's own generated phrase.
+
+The converter ships as a command (`novelenc seed`) and as a single offline HTML file
+whose security policy blocks all network access. It is deliberately not offered on the
+website, so that people are never encouraged to type a recovery phrase into a web page.
+
 ---
 
 ## 6. Measurements
@@ -672,7 +700,8 @@ fewer people borrow it? Some answers:
 * **Rust library:** `novel-encryption`, the reference implementation.
 * **Command-line tool:** `novelenc` (`inspect`, `keygen` with `--style narrative|chain`
   and `--long-term`, `check`, `encrypt` with `--armor story|novel|compact|text|binary`,
-  `decrypt`, `analyze`).
+  `decrypt`, `seed to|from` for wallet backups, `analyze`).
+* **Offline wallet-backup page:** `tools/novel-seed-offline.html`, one self-contained file.
 * **Web:** the same library compiled to WebAssembly, at novelencryption.com.
   Everything runs locally in the browser.
 * **Catalog:** twelve public-domain novels and the King James Bible from Project

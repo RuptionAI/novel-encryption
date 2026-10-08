@@ -313,6 +313,12 @@ impl NarrativeModel {
     /// choice among the 2^m most common options carries m bits. After the data
     /// is spent the story takes the most common path to a sentence end.
     pub fn story_encode(&self, data: &[u8]) -> Result<Vec<String>> {
+        self.story_encode_with(data, STORY_START_BITS, STORY_STEP_BITS)
+    }
+
+    /// [`Self::story_encode`] with explicit capacities: bits carried by the
+    /// opening and by each later word (larger means shorter but less natural).
+    pub fn story_encode_with(&self, data: &[u8], start_bits: u32, step_bits: u32) -> Result<Vec<String>> {
         if data.len() < STORY_LEAD {
             return Err(Error::Armor(format!("story armor needs at least {STORY_LEAD} bytes")));
         }
@@ -329,7 +335,7 @@ impl NarrativeModel {
         payload.extend_from_slice(&data[STORY_LEAD..]);
         let mut bits = BitReader { data: &payload, pos: 0 };
 
-        let m0 = capacity(self.starts_ranked.len(), STORY_START_BITS);
+        let m0 = capacity(self.starts_ranked.len(), start_bits);
         let (a, b) = self.starts_ranked[bits.read(m0) as usize];
         let mut key = vec![a, b];
         let mut grace = 0;
@@ -342,7 +348,7 @@ impl NarrativeModel {
                 grace += 1;
             }
             let ranked = self.ranked(x, y);
-            let m = capacity(ranked.len(), STORY_STEP_BITS);
+            let m = capacity(ranked.len(), step_bits);
             key.push(ranked[bits.read(m) as usize]);
         }
         Ok(key.iter().map(|&i| self.words[i as usize].clone()).collect())
@@ -350,6 +356,11 @@ impl NarrativeModel {
 
     /// Recover the data carried by a story (inverse of [`Self::story_encode`]).
     pub fn story_decode(&self, words: &[String]) -> Result<Vec<u8>> {
+        self.story_decode_with(words, STORY_START_BITS, STORY_STEP_BITS)
+    }
+
+    /// Inverse of [`Self::story_encode_with`]; the capacities must match.
+    pub fn story_decode_with(&self, words: &[String], start_bits: u32, step_bits: u32) -> Result<Vec<u8>> {
         let bad = |i: usize, w: &str| {
             Error::Armor(format!("word {} (\"{w}\") is not how this book would continue the story", i + 1))
         };
@@ -361,7 +372,7 @@ impl NarrativeModel {
             return Err(Error::Armor("story is too short".into()));
         }
         let mut out = BitWriter::default();
-        let m0 = capacity(self.starts_ranked.len(), STORY_START_BITS);
+        let m0 = capacity(self.starts_ranked.len(), start_bits);
         let first = self.starts_ranked[..1 << m0]
             .iter()
             .position(|p| *p == (ids[0], ids[1]))
@@ -372,7 +383,7 @@ impl NarrativeModel {
                 return Ok(data);
             }
             let ranked = self.ranked(ids[i - 2], ids[i - 1]);
-            let m = capacity(ranked.len(), STORY_STEP_BITS);
+            let m = capacity(ranked.len(), step_bits);
             let p = ranked[..1 << m].iter().position(|&c| c == ids[i]).ok_or_else(|| bad(i, &words[i]))?;
             out.write(p as u32, m);
         }

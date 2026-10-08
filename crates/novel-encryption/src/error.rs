@@ -42,6 +42,9 @@ pub enum Error {
     #[error("decryption failed: wrong novel, wrong key, or the message was altered")]
     DecryptFailed,
 
+    #[error("wallet backup: {0}")]
+    Seed(String),
+
     #[error("armor: {0}")]
     Armor(String),
 
