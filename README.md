@@ -62,6 +62,7 @@ works, including your own.
 | `crates/novel-encryption-wasm` | WebAssembly bindings for the website |
 | `site/` | novelencryption.com source (`scripts/build_site.sh` → `dist/`) |
 | `catalog/` | public-domain texts, sources and fingerprints |
+| `infra/aws/` | hosting on AWS: S3 + CloudFront + Route 53 (`./deploy.sh`) |
 | `docs/SPEC.md` | byte-exact specification |
 | `docs/WHITEPAPER.md` | design, measurements and security analysis |
 | `vectors/v1.json` | conformance vectors for other-language ports |

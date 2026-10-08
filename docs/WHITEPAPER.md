@@ -525,6 +525,17 @@ Books with large vocabularies keep long-term keys shortest. We do not add entrop
 outside the book, such as a key file or a random number: that would break the promise
 of "a book and some words," and a private book's secrecy cannot be measured.
 
+**Why not more than 256 bits?** The generator accepts targets up to 4,096 bits, but
+going past 256 adds no real security. Every message is ultimately sealed with a 256-bit
+XChaCha20 key, so a longer passage still funnels into 256 bits. And 256 bits is already
+beyond physical limits. By Landauer's principle, merely *counting* to 2²⁵⁶ on an ideal
+computer at the temperature of deep space would take more energy than the Sun will
+emit in its lifetime, before a single key is even tested [13]. NIST defines its highest
+post-quantum security category as being as hard as searching for a 256-bit AES key, and
+a 256-bit key here meets that bar. Beyond this point the risks that remain are not in the
+mathematics: a compromised device, a key that is shared or lost, or tampered software.
+Section 7.8 addresses the last of these.
+
 ### 7.3 What the book contributes
 
 For catalog books the novel adds **no secrecy**, and our strength figures never count
@@ -590,8 +601,11 @@ The reference implementation is written in Rust using the RustCrypto `argon2` an
 `chacha20poly1305` crates. It zeroizes key material after use, validates every header
 field before use, and has no unsafe code of its own. The web version runs the same Rust
 code compiled to WebAssembly inside the visitor's browser, and no book, key or data is
-sent to a server. A web page is only as trustworthy as the code it serves. For high
-stakes, use the command-line tool or verify the published build against the open source.
+sent to a server. The site loads nothing from any other origin: no third-party scripts,
+fonts or analytics. It is served with a strict Content Security Policy that blocks inline
+and external code, along with HSTS, frame denial and a no-referrer policy. A web page is
+nonetheless only as trustworthy as the code it serves. For high stakes, use the
+command-line tool or verify the published build against the open source.
 
 ### 7.9 Out of scope
 
@@ -715,6 +729,7 @@ its readers, and turning their secrets into stories.
 10. D. Kahn, *The Codebreakers*, rev. ed., Scribner, 1996 (book ciphers; the Arnold–André correspondence).
 11. *The Beale Papers*, Lynchburg, Virginia, 1885.
 12. Project Gutenberg, https://www.gutenberg.org (catalog texts).
+13. B. Schneier, *Applied Cryptography*, 2nd ed., Wiley, 1996, §7.1 (thermodynamic limits on brute force).
 
 ---
 
