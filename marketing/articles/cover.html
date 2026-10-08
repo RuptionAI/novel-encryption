@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Article cover</title>
+<link rel="stylesheet" href="../../site/fonts/fonts.css">
+<style>
+  /* Article cover. ?w=1500&h=600 (X, 5:2) or ?w=1920&h=1080 (LinkedIn, 16:9). */
+  :root { --paper: #f6efe1; --card: #fffaf0; --ink: #2b2118; --ink-2: #5b4b3c; --accent: #8a2b22; --gold: #b0802a; --rule: #d9c9a8; }
+  html, body { margin: 0; height: 100%; background: var(--paper); }
+  body { font-family: "EB Garamond", Georgia, serif; color: var(--ink); display: flex; align-items: center; justify-content: center; }
+  .card { position: relative; width: 86%; height: 78%; background: var(--card); border: 1px solid var(--rule);
+          box-shadow: 0 1.2vh 3.5vh rgba(43,33,24,.12); box-sizing: border-box; padding: 6vh 6vw 6vh 9vw;
+          background-image: repeating-linear-gradient(to bottom, transparent 0 calc(6.4vh - 1px), rgba(138,43,34,.07) calc(6.4vh - 1px) 6.4vh);
+          display: flex; flex-direction: column; justify-content: center; }
+  .card::before { content: ""; position: absolute; left: 6.5vw; top: 0; bottom: 0; border-left: 2px solid rgba(138,43,34,.25); }
+  .call { font-family: "Courier Prime", monospace; font-size: 3.4vh; color: var(--ink-2); letter-spacing: .06em; }
+  h1 { font-size: 15vh; line-height: 1; margin: 2.5vh 0 2vh; font-weight: 600; letter-spacing: -0.01em; }
+  h1 em { color: var(--accent); }
+  .sub { font-size: 5vh; margin: 0; color: var(--ink-2); font-style: italic; }
+  .by { margin-top: 4vh; font-family: "Courier Prime", monospace; font-size: 3.3vh; color: var(--ink-2); }
+  .by b { color: var(--accent); }
+  .stamp { position: absolute; right: 4vw; top: 6vh; transform: rotate(8deg); border: 0.45vh solid var(--accent); color: var(--accent);
+           font: 700 3.4vh "Courier Prime", monospace; padding: 0.9vh 1.6vh; letter-spacing: .08em; opacity: .85; }
+</style></head>
+<body><div class="card">
+  <div class="stamp">CHECKED OUT</div>
+  <div class="call">NOVEL ENCRYPTION · A STORY FROM THE LIBRARY BOARD</div>
+  <h1>Every book is <em>a key</em></h1>
+  <p class="sub">An idea this morning. A launch by tonight.</p>
+  <div class="by">Jeff Pittman · <b>novelencryption.com</b></div>
+</div></body></html>
