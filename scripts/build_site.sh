@@ -23,6 +23,7 @@ fi
 
 cp -R "$ROOT/site/." "$DIST/"
 cp "$ROOT/catalog/catalog.json" "$DIST/novels/catalog.json"
+python3 -I "$ROOT/scripts/render_catalog.py" "$DIST/novels/catalog.json" "$DIST/index.html"
 cp "$ROOT"/catalog/texts/*.txt "$DIST/novels/"
 cp "$ROOT/docs/WHITEPAPER.md" "$DIST/WHITEPAPER.md"
 cp "$ROOT/docs/novel-encryption-whitepaper.pdf" "$DIST/"   # built by scripts/build_pdf.sh

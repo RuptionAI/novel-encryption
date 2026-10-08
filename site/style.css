@@ -113,7 +113,7 @@ h1 em { color: var(--accent); font-weight: 500; }
 
 /* Steps */
 .step { padding: 44px 0 8px; transition: opacity 0.3s; }
-.step[aria-disabled="true"] { opacity: 0.55; }
+
 .step-head { display: flex; gap: 16px; align-items: baseline; margin-bottom: 18px; }
 .step-no { font-size: 2rem; color: var(--card-red); font-weight: 600; min-width: 2.2ch; }
 h2 { font-size: 1.85rem; margin: 0 0 4px; font-weight: 600; }
@@ -190,6 +190,7 @@ h2 { font-size: 1.85rem; margin: 0 0 4px; font-weight: 600; }
 .own-card .btn { align-self: flex-start; margin-top: 10px; }
 
 .book-status {
+  min-height: 4.8em; /* the loaded status's height, reserved so nothing below moves */
   margin-top: 18px;
   padding: 12px 16px;
   border-left: 3px solid var(--gold);
@@ -357,3 +358,22 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 }
 
 .meter-mark-128 { left: 50%; }
+
+@media (max-width: 600px) { .book-status { min-height: 11em; } }
+
+/* Guide line at the top of steps II and III: says what to do next, or what
+   book is in use. One line of fixed height, so it never moves the layout. */
+.guide {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px;
+  min-height: 3.2em; margin: 0 0 16px; padding: 10px 14px;
+  border: 1px dashed var(--gold); border-radius: 3px; background: var(--paper-2);
+  font-size: 0.98rem;
+}
+.guide.ready { border-style: solid; border-color: var(--rule); }
+.guide-text { flex: 1 1 18em; min-width: 0; }
+.guide-go { font-family: var(--type); font-size: 0.88rem; white-space: nowrap; }
+@media (max-width: 600px) { .guide { min-height: 5.6em; } }
+/* Brief highlight on the shelf when a guide link sends the reader there. */
+.catalog.nudge .card { animation: nudge 1.1s ease-out 1; }
+@keyframes nudge { 30% { box-shadow: 0 0 0 3px var(--gold); } }
+@media (prefers-reduced-motion: reduce) { .catalog.nudge .card { animation: none; outline: 2px solid var(--gold); } }

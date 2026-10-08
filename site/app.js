@@ -41,26 +41,33 @@ async function loadCatalog() {
     const res = await fetch("novels/catalog.json");
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { novels } = await res.json();
-    box.innerHTML = "";
-    novels.forEach((n, i) => {
-      const card = document.createElement("button");
-      card.type = "button";
-      card.className = "card";
-      card.setAttribute("role", "listitem");
-      card.setAttribute("aria-pressed", "false");
-      card.dataset.slug = n.slug;
-      card.innerHTML = `
-        <span class="stamp">CHECKED OUT</span>
-        <span class="card-call">NE ${String(i + 1).padStart(3, "0")} · PG ${esc(n.gutenberg_id)}</span>
-        <span class="card-title">${esc(n.title)}</span>
-        <span class="card-author">${esc(n.author)}, ${esc(n.year)}</span>
-        <span class="card-meta">${fmt.format(n.key_vocabulary)} words · 128-bit key:<br>
-          ~${n.narrative_words_for_128_bits}-word passage or ${n.words_for_128_bits}-word chain</span>`;
-      card.addEventListener("click", () => chooseCatalog(n, card));
-      box.appendChild(card);
+    // The build writes the cards into the page (no layout shift); render them
+    // here only when running the unbuilt source.
+    if (!box.querySelector(".card")) {
+      box.innerHTML = "";
+      novels.forEach((n, i) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "card";
+        card.setAttribute("role", "listitem");
+        card.setAttribute("aria-pressed", "false");
+        card.dataset.slug = n.slug;
+        card.innerHTML = `
+          <span class="stamp">CHECKED OUT</span>
+          <span class="card-call">NE ${String(i + 1).padStart(3, "0")} · PG ${esc(n.gutenberg_id)}</span>
+          <span class="card-title">${esc(n.title)}</span>
+          <span class="card-author">${esc(n.author)}, ${esc(n.year)}</span>
+          <span class="card-meta">${fmt.format(n.key_vocabulary)} words · 128-bit key:<br>
+            ~${n.narrative_words_for_128_bits}-word passage or ${n.words_for_128_bits}-word chain</span>`;
+        box.appendChild(card);
+      });
+    }
+    const bySlug = new Map(novels.map((n) => [n.slug, n]));
+    box.querySelectorAll(".card[data-slug]").forEach((card) => {
+      card.addEventListener("click", () => chooseCatalog(bySlug.get(card.dataset.slug), card));
     });
   } catch (e) {
-    box.innerHTML = `<p class="status bad">Couldn't open the catalog (${esc(e.message)}). You can still bring your own book.</p>`;
+    bookStatus(`Couldn't open the catalog (${esc(e.message)}). You can still bring your own book.`, true);
   }
 }
 
@@ -111,8 +118,6 @@ function bookStatus(html, bad = false) {
 function setBook(book) {
   state.book = book;
   const on = !!book;
-  $("key").setAttribute("aria-disabled", String(!on));
-  $("seal").setAttribute("aria-disabled", String(!on));
   $("gen-btn").disabled = !on;
   if (book) {
     const s = book.stats;
@@ -270,7 +275,47 @@ $("key-save").addEventListener("click", () => {
   });
 });
 
+// Guide lines in steps II and III: tell the reader what to do next.
+function renderGuides() {
+  const b = state.book;
+  const title = b ? `<i>${esc(b.title)}</i>` : "";
+  const go = (href, label) => `<a class="guide-go" href="${href}">${label}</a>`;
+  const set = (id, ready, text, link) => {
+    const el = $(id);
+    el.classList.toggle("ready", ready);
+    el.innerHTML = `<span class="guide-text">${text}</span> ${link}`;
+  };
+  if (!b) {
+    set("guide-key", false, "<b>Start with step I:</b> pick a book from the shelf above. Your key is drawn from its words.", go("#shelf", "Choose a book ↑"));
+    set("guide-seal", false, "<b>Pick a book and draw a key first</b> (steps I and II), then write your message here.", go("#shelf", "Choose a book ↑"));
+    return;
+  }
+  set("guide-key", true, `Drawing from ${title}. Press <b>Draw a key from the book</b>, or paste a key you already have.`, go("#shelf", "Change book ↑"));
+  if (state.keyOk) {
+    set("guide-seal", true, `Ready: sealing and opening with ${title} and your key.`, go("#key", "Change key ↑"));
+  } else {
+    set("guide-seal", false, `Using ${title}. <b>Draw or paste your key in step II</b>, then write your message here.`, go("#key", "Go to step II ↑"));
+  }
+}
+
+document.addEventListener("click", (e) => {
+  const a = e.target.closest(".guide-go");
+  if (!a) return;
+  e.preventDefault();
+  const target = document.querySelector(a.getAttribute("href"));
+  const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+  if (a.getAttribute("href") === "#shelf") {
+    const cat = $("catalog");
+    cat.classList.remove("nudge");
+    void cat.offsetWidth; // restart the highlight
+    cat.classList.add("nudge");
+    setTimeout(() => cat.classList.remove("nudge"), 1200);
+  }
+});
+
 function updateButtons() {
+  renderGuides();
   const ready = !!state.book && state.keyOk;
   $("seal-btn").disabled = !ready || (!state.sealFile && !$("seal-text").value);
   $("open-btn").disabled = !ready || (!state.openFile && !$("open-text").value.trim());

@@ -18,6 +18,9 @@
   <meta name="twitter:creator" content="@jeffpittman">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='8' y='6' width='40' height='52' rx='3' fill='%238a2b22'/%3E%3Crect x='14' y='6' width='34' height='52' rx='2' fill='%23b8432f'/%3E%3Ccircle cx='46' cy='38' r='9' fill='none' stroke='%23e9c46a' stroke-width='4'/%3E%3Crect x='44' y='44' width='4' height='14' fill='%23e9c46a'/%3E%3C/svg%3E">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <link rel="preload" href="fonts/EBGaramond-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/CourierPrime-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/CourierPrime-700-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -52,7 +55,7 @@
       </header>
 
       <div id="catalog" class="catalog" role="list" aria-label="Novel catalog">
-        <p class="muted">Opening the card catalog…</p>
+        <!-- CATALOG -->
       </div>
 
       <div class="own-book">
@@ -65,11 +68,11 @@
         </label>
       </div>
 
-      <div id="book-status" class="book-status" aria-live="polite" hidden></div>
+      <div id="book-status" class="book-status" aria-live="polite"><strong>Start here:</strong> tap a card to put that book on your desk, or bring your own. Then draw a key from it in step II.</div>
     </section>
 
     <!-- 2. Key -->
-    <section id="key" class="step" aria-disabled="true">
+    <section id="key" class="step">
       <header class="step-head">
         <span class="step-no">II.</span>
         <div>
@@ -81,6 +84,7 @@
       </header>
 
       <div class="panel">
+        <p id="guide-key" class="guide" aria-live="polite"><span class="guide-text"><b>Start with step I:</b> pick a book from the shelf above. Your key is drawn from its words.</span> <a class="guide-go" href="#shelf">Choose a book ↑</a></p>
         <div class="depth">
           <span class="label">Key style</span>
           <div class="seg" role="radiogroup" aria-label="Key style">
@@ -120,7 +124,7 @@
     </section>
 
     <!-- 3. Seal & open -->
-    <section id="seal" class="step" aria-disabled="true">
+    <section id="seal" class="step">
       <header class="step-head">
         <span class="step-no">III.</span>
         <div>
@@ -129,6 +133,7 @@
         </div>
       </header>
 
+      <p id="guide-seal" class="guide" aria-live="polite"><span class="guide-text"><b>Pick a book and draw a key first</b> (steps I and II), then write your message here.</span> <a class="guide-go" href="#shelf">Choose a book ↑</a></p>
       <div class="tabs" role="tablist">
         <button role="tab" id="tab-seal" aria-selected="true" aria-controls="pane-seal">Seal</button>
         <button role="tab" id="tab-open" aria-selected="false" aria-controls="pane-open">Open</button>
